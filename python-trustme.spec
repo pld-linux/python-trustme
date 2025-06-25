@@ -3,13 +3,14 @@
 %bcond_without	doc	# Sphinx documentation
 %bcond_without	tests	# unit tests
 %bcond_without	python2 # CPython 2.x module
-%bcond_without	python3 # CPython 3.x module
+%bcond_with	python3 # CPython 3.x module (built from python3-trustme.spec)
 
 Summary:	Number 1 quality TLS certs while you wait, for the discerning tester
 Summary(pl.UTF-8):	Najlepsze certyfikaty TLS dla wnikliwych testerów
 Name:		python-trustme
+# keep 0.x here for python2 support
 Version:	0.9.0
-Release:	3
+Release:	4
 License:	Apache v2.0 or MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.org/simple/trustme/
@@ -105,9 +106,10 @@ Dokumentacja API modułu Pythona trustme.
 %py_build
 
 %if %{with tests}
+# *_end_to_end tests use localhost networking
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
 PYTHONPATH=$(pwd) \
-%{__python} -m pytest tests
+%{__python} -m pytest tests -k 'not test_stdlib_end_to_end and not test_pyopenssl_end_to_end'
 %endif
 %endif
 
@@ -117,7 +119,7 @@ PYTHONPATH=$(pwd) \
 %if %{with tests}
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
 PYTHONPATH=$(pwd) \
-%{__python3} -m pytest tests
+%{__python3} -m pytest tests -k 'not test_stdlib_end_to_end and not test_pyopenssl_end_to_end'
 %endif
 %endif
 
